@@ -6,6 +6,7 @@ frontend/node_modules
 frontend/.next
 frontend/.env.local
 frontend/.env
+frontend/.env.production  ← add this too
 
 # Backend
 backend/node_modules
