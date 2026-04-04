@@ -1,10 +1,10 @@
-const User = require('../models/user.model')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
-const { Resend } = require('resend')
+const User = require("../models/user.model");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const { Resend } = require("resend");
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // shared email wrapper — logo centered, single sender identity
 function emailWrapper(title, bodyHtml) {
@@ -45,40 +45,46 @@ function emailWrapper(title, bodyHtml) {
         </table>
       </body>
     </html>
-  `
+  `;
 }
 
 // ─── SIGNUP ───────────────────────────────────────
 exports.signup = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' })
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: 'Password must be at least 6 characters' })
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 6 characters" });
     }
 
-    const existingUser = await User.findOne({ email })
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'Email already registered' })
+      return res.status(400).json({ message: "Email already registered" });
     }
 
-    const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt)
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-    const verificationToken = crypto.randomBytes(32).toString('hex')
+    const verificationToken = crypto.randomBytes(32).toString("hex");
 
     const user = new User({
       email,
       password: hashedPassword,
-      verificationToken
-    })
-    await user.save()
+      verificationToken,
+    });
+    await user.save();
 
-    const verifyURL = `http://localhost:5000/api/auth/verify/${verificationToken}`
+    // const verifyURL = `http://localhost:5000/api/auth/verify/${verificationToken}`
+    const serverURL = process.env.SERVER_URL || "http://localhost:5000";
+    const verifyURL = `${serverURL}/api/auth/verify/${verificationToken}`;
 
     const body = `
       <tr>
@@ -94,106 +100,113 @@ exports.signup = async (req, res) => {
           </a>
         </td>
       </tr>
-    `
+    `;
 
     await resend.emails.send({
-      from: 'Blynk <onboarding@resend.dev>',
+      from: "Blynk <onboarding@resend.dev>",
       to: email,
-      subject: 'Verify your Blynk account',
-      html: emailWrapper('Welcome to Blynk!', body)
-    })
+      subject: "Verify your Blynk account",
+      html: emailWrapper("Welcome to Blynk!", body),
+    });
 
-    res.status(200).json({ message: 'Verification email sent! Please check your inbox.' })
-
+    res
+      .status(200)
+      .json({ message: "Verification email sent! Please check your inbox." });
   } catch (err) {
-    console.error('Signup error:', err)
-    res.status(500).json({ message: 'Server error', error: err.message })
+    console.error("Signup error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
   }
-}
+};
 
 // ─── VERIFY EMAIL ─────────────────────────────────
 exports.verifyEmail = async (req, res) => {
   try {
-    const { token } = req.params
+    const { token } = req.params;
 
-    const user = await User.findOne({ verificationToken: token })
+    const user = await User.findOne({ verificationToken: token });
     if (!user) {
-      return res.redirect('http://localhost:3000/auth/login?error=invalid_token')
+      return res.redirect(
+        "http://localhost:3000/auth/login?error=invalid_token",
+      );
     }
 
-    user.isVerified = true
-    user.verificationToken = null
-    await user.save()
+    user.isVerified = true;
+    user.verificationToken = null;
+    await user.save();
 
-    res.redirect('http://localhost:3000/auth/login?verified=true')
-
+    res.redirect("http://localhost:3000/auth/login?verified=true");
   } catch (err) {
-    console.error('Verify error:', err)
-    res.status(500).json({ message: 'Server error' })
+    console.error("Verify error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 // ─── LOGIN ────────────────────────────────────────
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body
+    const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' })
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' })
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     if (!user.isVerified) {
-      return res.status(400).json({ message: 'Please verify your email first' })
+      return res
+        .status(400)
+        .json({ message: "Please verify your email first" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' })
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    )
+      { expiresIn: "7d" },
+    );
 
     res.status(200).json({
       token,
       user: { email: user.email },
-      message: 'Login successful'
-    })
-
+      message: "Login successful",
+    });
   } catch (err) {
-    console.error('Login error:', err)
-    res.status(500).json({ message: 'Server error' })
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 // ─── FORGOT PASSWORD ──────────────────────────────
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body
+    const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ message: 'Email is required' })
+      return res.status(400).json({ message: "Email is required" });
     }
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Email not found' })
+      return res.status(400).json({ message: "Email not found" });
     }
 
     // use separate resetPasswordToken field — never touches verificationToken
-    const resetToken = crypto.randomBytes(32).toString('hex')
-    user.resetPasswordToken = resetToken
-    await user.save()
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = resetToken;
+    await user.save();
 
-    const resetURL = `http://localhost:3000/auth/reset-password/${resetToken}`
+    // const resetURL = `http://localhost:3000/auth/reset-password/${resetToken}`
+    const clientURL = process.env.CLIENT_URL || "http://localhost:3000";
+    const resetURL = `${clientURL}/auth/reset-password/${resetToken}`;
 
     const body = `
       <tr>
@@ -209,48 +222,48 @@ exports.forgotPassword = async (req, res) => {
           </a>
         </td>
       </tr>
-    `
+    `;
 
     await resend.emails.send({
-      from: 'Blynk <onboarding@resend.dev>',
+      from: "Blynk <onboarding@resend.dev>",
       to: email,
-      subject: 'Reset your Blynk password',
-      html: emailWrapper('Reset your password', body)
-    })
+      subject: "Reset your Blynk password",
+      html: emailWrapper("Reset your password", body),
+    });
 
-    res.status(200).json({ message: 'Password reset email sent! Please check your inbox.' })
-
+    res
+      .status(200)
+      .json({ message: "Password reset email sent! Please check your inbox." });
   } catch (err) {
-    console.error('Forgot password error:', err)
-    res.status(500).json({ message: 'Server error' })
+    console.error("Forgot password error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 // ─── RESET PASSWORD ───────────────────────────────
 exports.resetPassword = async (req, res) => {
   try {
-    const { token } = req.params
-    const { password } = req.body
+    const { token } = req.params;
+    const { password } = req.body;
 
     if (!password) {
-      return res.status(400).json({ message: 'Password is required' })
+      return res.status(400).json({ message: "Password is required" });
     }
 
     // look up by resetPasswordToken, not verificationToken
-    const user = await User.findOne({ resetPasswordToken: token })
+    const user = await User.findOne({ resetPasswordToken: token });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired token' })
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    const salt = await bcrypt.genSalt(10)
-    user.password = await bcrypt.hash(password, salt)
-    user.resetPasswordToken = null
-    await user.save()
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    user.resetPasswordToken = null;
+    await user.save();
 
-    res.status(200).json({ message: 'Password reset successful' })
-
+    res.status(200).json({ message: "Password reset successful" });
   } catch (err) {
-    console.error('Reset password error:', err)
-    res.status(500).json({ message: 'Server error' })
+    console.error("Reset password error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-}
+};

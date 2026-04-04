@@ -9,7 +9,7 @@ export function useSocket(userId) {
   useEffect(() => {
     if (!userId) return
 
-    const socket = io('http://localhost:5000', {
+    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000', {
       transports: ['websocket'],
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
