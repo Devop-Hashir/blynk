@@ -7,12 +7,14 @@ const roomRoutes = require("./routes/room.routes");
 const voiceCommandRoutes = require("./routes/voiceCommand.routes");
 
 const app = express();
-app.use(
-  cors({
-    origin: ["http://localhost:3000", "https://blynk-project-1.vercel.app"],
-    credentials: true,
-  }),
-);
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://blynk-project-1-bvv11su9g-muhammad-hashirs-projects-25b99950.vercel.app',
+    'https://blynk-project-1.vercel.app'
+  ],
+  credentials: true
+}))
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
