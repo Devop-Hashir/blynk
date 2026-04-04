@@ -103,7 +103,7 @@ export default function VoiceCommandsPage() {
         <div style={{ background: '#111', borderRadius: '12px', padding: '18px 22px', margin: '24px 0', borderLeft: '4px solid #d4f532' }}>
           <div style={{ fontSize: '12px', fontWeight: '700', color: '#d4f532', marginBottom: '8px', letterSpacing: '0.06em' }}>HOW IT WORKS</div>
           <div style={{ fontSize: '13px', color: '#ccc', lineHeight: 1.7 }}>
-            1. Add a command with a phrase you'll say, e.g. <code style={{ background: '#222', padding: '1px 6px', borderRadius: '4px' }}>turn on fan</code><br />
+            1. Add a command with a phrase you&apos;ll say, e.g. <code style={{ background: '#222', padding: '1px 6px', borderRadius: '4px' }}>turn on fan</code><br />
             2. Link it to a device pin and set the action (ON or OFF)<br />
             3. Click the 🎙️ mic button in any room page and say your phrase<br />
             4. The device will respond instantly
@@ -133,7 +133,7 @@ export default function VoiceCommandsPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <span style={{ fontSize: '16px' }}>🎙️</span>
-                    <span style={{ fontWeight: '700', fontSize: '15px', color: '#111' }}>"{cmd.phrase}"</span>
+                    <span style={{ fontWeight: '700', fontSize: '15px', color: '#111' }}>&quot;{cmd.phrase}&quot;</span>
                   </div>
                   <div style={{ fontSize: '12px', color: '#888' }}>
                     {cmd.deviceName} → {cmd.pinLabel} ({cmd.pinNumber})
@@ -165,7 +165,7 @@ export default function VoiceCommandsPage() {
               {editCmd ? 'Edit Command' : 'Add Voice Command'}
             </h2>
 
-            <label style={lbl}>Phrase <span style={{ color: '#aaa', fontWeight: 400, textTransform: 'none' }}>(what you'll say)</span></label>
+            <label style={lbl}>Phrase <span style={{ color: '#aaa', fontWeight: 400, textTransform: 'none' }}>(what you&apos;ll say)</span></label>
             <input
               value={form.phrase}
               onChange={e => setForm(f => ({ ...f, phrase: e.target.value }))}
