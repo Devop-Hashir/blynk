@@ -8,13 +8,8 @@ const voiceCommandRoutes = require("./routes/voiceCommand.routes");
 
 const app = express();
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin || origin.endsWith('.vercel.app') || origin === 'http://localhost:3000' || origin === 'https://localhost:3000') {
-      return cb(null, true)
-    }
-    cb(new Error('Not allowed by CORS'))
-  },
-  credentials: true
+  origin: '*',
+  credentials: false  // must be false when origin is *
 }))
 app.use(express.json());
 app.use(cookieParser());
