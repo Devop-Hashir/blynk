@@ -7,7 +7,7 @@ import { useSocket } from '@/app/hooks/useSocket'
 import Navbar from '../components/Navbar'
 import Toggle from '../components/Toggle'
 import ErrorBar from '../components/ErrorBar'
-import { inp, lbl, btnPrimary } from '../styles/common'
+import { inp, lbl } from '../styles/common'
 
 const ICONS = { light: '💡', fan: '🌀', ac: '❄️', tv: '📺', plug: '🔌', door: '🚪', other: '⚙️' }
 const ALL_PINS = Array.from({ length: 14 }, (_, i) => `D${i}`)
@@ -23,8 +23,9 @@ function DevicePageInner() {
   const [pinForm, setPinForm] = useState({ pinNumber: 'D0', label: '' })
   const [showPinModal, setShowPinModal] = useState(false)
   const [error, setError] = useState('')
+  const [isOnline, setIsOnline] = useState(false) // ← separate online state
 
-  const { socket, connected, controlPin } = useSocket(userId)
+  const { socket, connected, controlPin, isDeviceOnline } = useSocket(userId)
   useEffect(() => { setUserId(getUserId()) }, [])
 
   const loadDevice = useCallback(async () => {
@@ -40,19 +41,57 @@ function DevicePageInner() {
 
   useEffect(() => { loadDevice() }, [loadDevice])
 
+  // ─── update online status from socket ────────
+  useEffect(() => {
+    if (deviceId) {
+      setIsOnline(isDeviceOnline(deviceId))
+    }
+  }, [deviceId, isDeviceOnline])
+
   useEffect(() => {
     if (!socket || !device) return
+
     const onStatus = ({ deviceId: dId, pin, state }) => {
       if (dId !== deviceId) return
-      setDevice(prev => ({ ...prev, pins: prev.pins.map(p => p.pinNumber === pin ? { ...p, state } : p) }))
+      setDevice(prev => ({
+        ...prev,
+        pins: prev.pins.map(p => p.pinNumber === pin ? { ...p, state } : p)
+      }))
     }
+
+    const onOnline = ({ deviceId: dId }) => {
+      if (dId !== deviceId) return
+      setIsOnline(true)
+    }
+
+    const onOffline = ({ deviceId: dId }) => {
+      if (dId !== deviceId) return
+      setIsOnline(false)
+    }
+
+    const onOnlineDevices = ({ deviceIds }) => {
+      setIsOnline(deviceIds.includes(deviceId))
+    }
+
     socket.on('status_update', onStatus)
-    return () => socket.off('status_update', onStatus)
+    socket.on('device_online', onOnline)
+    socket.on('device_offline', onOffline)
+    socket.on('online_devices', onOnlineDevices)
+
+    return () => {
+      socket.off('status_update', onStatus)
+      socket.off('device_online', onOnline)
+      socket.off('device_offline', onOffline)
+      socket.off('online_devices', onOnlineDevices)
+    }
   }, [socket, device, deviceId])
 
   const handleToggle = async (pin) => {
     const newState = pin.state === 'ON' ? 'OFF' : 'ON'
-    setDevice(prev => ({ ...prev, pins: prev.pins.map(p => p.pinNumber === pin.pinNumber ? { ...p, state: newState } : p) }))
+    setDevice(prev => ({
+      ...prev,
+      pins: prev.pins.map(p => p.pinNumber === pin.pinNumber ? { ...p, state: newState } : p)
+    }))
     controlPin(deviceId, pin.pinNumber, newState)
     try { await api.controlPin({ deviceId, pin: pin.pinNumber, state: newState }) } catch {}
   }
@@ -106,9 +145,10 @@ function DevicePageInner() {
               <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#111', margin: '0 0 4px' }}>{device.name}</h1>
               <div style={{ fontSize: '13px', color: '#888' }}>{device.room} · {device.deviceId}</div>
             </div>
+            {/* ← uses isOnline state instead of device.isOnline */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: device.isOnline ? '#22c55e' : '#d1d5db' }} />
-              <span style={{ fontSize: '12px', color: '#888' }}>{device.isOnline ? 'Online' : 'Offline'}</span>
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: isOnline ? '#22c55e' : '#d1d5db' }} />
+              <span style={{ fontSize: '12px', color: '#888' }}>{isOnline ? 'Online' : 'Offline'}</span>
             </div>
           </div>
         </div>
@@ -128,7 +168,8 @@ function DevicePageInner() {
             Pins <span style={{ color: '#888', fontWeight: 400, fontSize: '13px' }}>({device.pins.length})</span>
           </h2>
           {availablePins.length > 0 && (
-            <button onClick={() => { setPinForm({ pinNumber: availablePins[0], label: '' }); setShowPinModal(true) }}
+            <button
+              onClick={() => { setPinForm({ pinNumber: availablePins[0], label: '' }); setShowPinModal(true) }}
               style={{ background: '#d4f532', border: 'none', borderRadius: '6px', padding: '7px 14px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', color: '#111' }}>
               + Add Pin
             </button>
@@ -139,15 +180,21 @@ function DevicePageInner() {
           <div style={{ background: '#fff', borderRadius: '12px', padding: '48px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔌</div>
             <p style={{ color: '#888', fontSize: '14px', margin: '0 0 16px' }}>No pins yet. Add a pin to control an appliance.</p>
-            <button onClick={() => { setPinForm({ pinNumber: 'D0', label: '' }); setShowPinModal(true) }}
+            <button
+              onClick={() => { setPinForm({ pinNumber: 'D0', label: '' }); setShowPinModal(true) }}
               style={{ background: '#d4f532', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}>
               + Add Pin
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: '14px' }}>
+          <div className="pin-grid">
             {device.pins.map(pin => (
-              <PinCard key={pin.pinNumber} pin={pin} onToggle={() => handleToggle(pin)} onRemove={() => handleRemovePin(pin.pinNumber)} />
+              <PinCard
+                key={pin.pinNumber}
+                pin={pin}
+                onToggle={() => handleToggle(pin)}
+                onRemove={() => handleRemovePin(pin.pinNumber)}
+              />
             ))}
           </div>
         )}
@@ -162,7 +209,12 @@ function DevicePageInner() {
               {availablePins.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
             <label style={lbl}>Label</label>
-            <input value={pinForm.label} onChange={e => setPinForm(f => ({ ...f, label: e.target.value }))} placeholder="e.g. Ceiling Light" style={inp} />
+            <input
+              value={pinForm.label}
+              onChange={e => setPinForm(f => ({ ...f, label: e.target.value }))}
+              placeholder="e.g. Ceiling Light"
+              style={inp}
+            />
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setShowPinModal(false)} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
               <button onClick={handleAddPin} disabled={!pinForm.label.trim()} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: pinForm.label.trim() ? '#d4f532' : '#e8e8e8', cursor: pinForm.label.trim() ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>Add Pin</button>

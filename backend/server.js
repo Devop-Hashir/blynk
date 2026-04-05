@@ -32,12 +32,22 @@ socket.on("device_register", (data) => {
 });
 
   // ── Dashboard registers ────────────────────────
-  socket.on("dashboard_register", (data) => {
-    socket.join(data.userId);
-    socket.userId = data.userId;
-    socket.clientType = "dashboard";
-    console.log(`✅ Dashboard registered: ${data.userId}`);
-  });
+socket.on("dashboard_register", (data) => {
+  socket.join(data.userId);
+  socket.userId = data.userId;
+  socket.clientType = "dashboard";
+  console.log(`✅ Dashboard registered: ${data.userId}`);
+
+  // ← send currently online devices to this dashboard
+  const onlineDeviceIds = []
+  io.sockets.sockets.forEach(s => {
+    if (s.clientType === 'device' && s.deviceId) {
+      onlineDeviceIds.push(s.deviceId)
+    }
+  })
+  socket.emit('online_devices', { deviceIds: onlineDeviceIds })
+  console.log('Sent online devices:', onlineDeviceIds)
+});
 
   // ── Dashboard sends control command ───────────
   socket.on("control", (data) => {

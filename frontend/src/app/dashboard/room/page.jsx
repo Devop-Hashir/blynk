@@ -9,7 +9,7 @@ import Navbar from '../components/Navbar'
 import Toggle from '../components/Toggle'
 import ErrorBar from '../components/ErrorBar'
 import DeleteModal from '../components/DeleteModel'
-import { inp,lbl,btnPrimary } from '../styles/common'
+import { inp, lbl, btnPrimary } from '../styles/common'
 
 const ICONS = { light: '💡', fan: '🌀', ac: '❄️', tv: '📺', plug: '🔌', door: '🚪', other: '⚙️' }
 const TYPES = ['light', 'fan', 'ac', 'tv', 'plug', 'door', 'other']
@@ -28,7 +28,7 @@ function RoomPageInner() {
   const [error, setError] = useState('')
   const [deleteTarget, setDeleteTarget] = useState(null)
 
-  const { socket, connected, controlPin } = useSocket(userId)
+  const { socket, connected, controlPin, isDeviceOnline } = useSocket(userId)
 
   const [voiceCommands, setVoiceCommands] = useState([])
   useEffect(() => {
@@ -63,20 +63,16 @@ function RoomPageInner() {
 
   useEffect(() => {
     if (!socket) return
+
     const onStatus = ({ deviceId, pin, state }) => {
       setDevices(prev => prev.map(d => d.deviceId !== deviceId ? d : {
         ...d, pins: d.pins.map(p => p.pinNumber === pin ? { ...p, state } : p)
       }))
     }
-    const onOffline = ({ deviceId }) => setDevices(prev => prev.map(d => d.deviceId === deviceId ? { ...d, isOnline: false } : d))
-    const onOnline = ({ deviceId }) => setDevices(prev => prev.map(d => d.deviceId === deviceId ? { ...d, isOnline: true } : d))
+
     socket.on('status_update', onStatus)
-    socket.on('device_offline', onOffline)
-    socket.on('device_online', onOnline)
     return () => {
       socket.off('status_update', onStatus)
-      socket.off('device_offline', onOffline)
-      socket.off('device_online', onOnline)
     }
   }, [socket])
 
@@ -115,7 +111,8 @@ function RoomPageInner() {
   }
 
   const activeCount = devices.reduce((a, d) => a + d.pins.filter(p => p.state === 'ON').length, 0)
-  const onlineCount = devices.filter(d => d.isOnline).length
+  // ← use isDeviceOnline from socket hook
+  const onlineCount = devices.filter(d => isDeviceOnline(d.deviceId)).length
 
   if (!roomName) { router.push('/dashboard'); return null }
 
@@ -188,6 +185,7 @@ function RoomPageInner() {
               <DeviceCard
                 key={device._id}
                 device={device}
+                isOnline={isDeviceOnline(device.deviceId)}
                 onToggle={pin => handleToggle(device, pin)}
                 onEdit={() => openEdit(device)}
                 onDelete={() => setDeleteTarget({ deviceId: device.deviceId, name: device.name })}
@@ -212,7 +210,7 @@ export default function RoomPage() {
   )
 }
 
-function DeviceCard({ device, onToggle, onEdit, onDelete, onManage }) {
+function DeviceCard({ device, isOnline, onToggle, onEdit, onDelete, onManage }) {
   const anyOn = device.pins.some(p => p.state === 'ON')
   return (
     <div style={{ background: anyOn ? '#111' : '#fff', borderRadius: '14px', padding: '22px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', border: anyOn ? '2px solid #d4f532' : '2px solid transparent', transition: 'all 0.2s' }}>
@@ -225,7 +223,8 @@ function DeviceCard({ device, onToggle, onEdit, onDelete, onManage }) {
             <div style={{ fontWeight: '700', fontSize: '15px', color: anyOn ? '#fff' : '#111' }}>{device.name}</div>
             <div style={{ fontSize: '11px', color: anyOn ? '#aaa' : '#888', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '5px' }}>
               {device.deviceId}
-              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: device.isOnline ? '#22c55e' : '#d1d5db', display: 'inline-block' }} />
+              {/* ← uses isOnline prop from socket hook */}
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: isOnline ? '#22c55e' : '#d1d5db', display: 'inline-block' }} title={isOnline ? 'Online' : 'Offline'} />
             </div>
           </div>
         </div>
@@ -281,7 +280,7 @@ function DeviceModal({ form, setForm, onSave, onClose, isEdit, roomName }) {
         <input value={form.deviceId} onChange={e => set('deviceId', e.target.value.trim())} placeholder="e.g. esp32-home-01" style={{ ...inp, fontFamily: 'monospace' }} />
         <div style={{ background: '#f7f7f7', borderRadius: '8px', padding: '12px 14px', marginTop: '-10px', marginBottom: '20px', fontSize: '11px', color: '#666', lineHeight: 1.8, borderLeft: '3px solid #d4f532' }}>
           <strong>📌 Flash this once in Arduino IDE:</strong><br />
-          <code style={{ color: '#333' }}>{`{const deviceId = "esp32-home-01";}`}</code><br />
+          <code style={{ color: '#333' }}>const char* deviceId = "esp32-home-01";</code><br />
           One ESP32 = one fixed ID. Add multiple devices using same ID.
         </div>
 
