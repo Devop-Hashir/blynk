@@ -7,7 +7,7 @@ export default function Hero() {
       <section
         style={{
           background: "#f7f7f7",
-          padding: "100px 24px 80px",
+          padding: "60px 16px 48px",
           textAlign: "center",
         }}
       >

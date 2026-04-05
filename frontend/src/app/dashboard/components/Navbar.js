@@ -3,29 +3,84 @@ import Link from 'next/link'
 
 export default function Navbar({ userEmail, connected, onLogout, showVoice = false }) {
   return (
-    <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ width: '36px', height: '36px', background: '#d4f532', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
-          <span style={{ fontWeight: '900', fontSize: '20px', color: '#000' }}>B</span>
+    <div style={{
+      background: '#fff', borderBottom: '1px solid #e8e8e8',
+      padding: '0 16px', height: '56px',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      position: 'sticky', top: 0, zIndex: 10, gap: '8px'
+    }}>
+      <style>{`
+        .nb-email { display: block; }
+        .nb-vtext { display: inline; }
+        .nb-ltext { display: inline; }
+        .nb-licon { display: none; }
+        .nb-vicon { display: none; }
+        @media(max-width:520px){
+          .nb-email  { display: none !important; }
+          .nb-vtext  { display: none !important; }
+          .nb-ltext  { display: none !important; }
+          .nb-licon  { display: inline !important; }
+          .nb-vicon  { display: inline !important; }
+        }
+      `}</style>
+
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        <div style={{
+          width: '34px', height: '34px', background: '#d4f532',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
+        }}>
+          <span style={{ fontWeight: '900', fontSize: '18px', color: '#000' }}>B</span>
         </div>
-        <span style={{ fontWeight: '700', fontSize: '18px', color: '#111' }}>Blynk</span>
+        <span style={{ fontWeight: '700', fontSize: '17px', color: '#111' }}>Blynk</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: connected ? '#22c55e' : '#d1d5db' }} />
-          <span style={{ fontSize: '12px', color: '#888' }}>{connected ? 'Live' : 'Connecting...'}</span>
+
+      {/* Right side */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+
+        {/* Connection status */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+          <div style={{
+            width: '7px', height: '7px', borderRadius: '50%',
+            background: connected ? '#22c55e' : '#d1d5db'
+          }} />
+          <span style={{ fontSize: '11px', color: '#888' }}>{connected ? 'Live' : 'Off'}</span>
         </div>
-        {userEmail && <span style={{ fontSize: '13px', color: '#888' }}>{userEmail}</span>}
+
+        {/* Email — hidden on mobile */}
+        {userEmail && (
+          <span className="nb-email" style={{
+            fontSize: '12px', color: '#888',
+            overflow: 'hidden', textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap', maxWidth: '150px'
+          }}>
+            {userEmail}
+          </span>
+        )}
+
+        {/* Voice link */}
         {showVoice && (
-          <Link href="/dashboard/voice" style={{ fontSize: '13px', color: '#555', textDecoration: 'none', padding: '6px 14px', border: '1.5px solid #e0e0e0', borderRadius: '6px' }}>
-            🎙️ Voice
+          <Link href="/dashboard/voice" style={{
+            fontSize: '13px', color: '#555', textDecoration: 'none',
+            padding: '5px 10px', border: '1.5px solid #e0e0e0',
+            borderRadius: '6px', flexShrink: 0
+          }}>
+            🎙️<span className="nb-vtext"> Voice</span>
           </Link>
         )}
+
+        {/* Logout button — shows text on desktop, icon on mobile */}
         {onLogout && (
-          <button onClick={onLogout} style={{ background: 'none', border: '1.5px solid #e0e0e0', borderRadius: '6px', padding: '6px 14px', fontSize: '13px', cursor: 'pointer', color: '#555' }}>
-            Logout
+          <button onClick={onLogout} style={{
+            background: 'none', border: '1.5px solid #e0e0e0',
+            borderRadius: '6px', padding: '5px 10px',
+            fontSize: '13px', cursor: 'pointer', color: '#555', flexShrink: 0
+          }}>
+            <span className="nb-ltext">Logout</span>
+            <span className="nb-licon">↩</span>
           </button>
         )}
+
       </div>
     </div>
   )

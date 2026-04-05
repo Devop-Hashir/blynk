@@ -31,7 +31,7 @@ export default function AuthCard({ children }) {
       <div style={{
         backgroundColor: "#fff",
         borderRadius: "12px",
-        padding: "40px 48px",
+        padding: "40px 32px",
         width: "100%",
         maxWidth: "380px",
         boxShadow: "0 2px 16px rgba(0,0,0,0.08)",

@@ -8,7 +8,7 @@ export default function Navbar() {
         position: "sticky", top: 0, zIndex: 50,
         background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)",
         borderBottom: "1px solid #f0f0f0",
-        padding: "0 32px", height: "60px",
+        padding: "0 16px", height: "60px",
         display: "flex", alignItems: "center", justifyContent: "space-between"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>

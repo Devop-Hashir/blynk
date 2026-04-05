@@ -25,3 +25,108 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+* { box-sizing: border-box; }
+
+/* ── Responsive overrides ── */
+@media (max-width: 600px) {
+  /* Reduce page padding */
+  div[style*="padding: 32px 24px"],
+  div[style*="padding: \"32px 24px\""] {
+    padding: 16px !important;
+  }
+
+  /* Stats grid: keep 3 cols but smaller */
+  div[style*="repeat(3,1fr)"] {
+    gap: 8px !important;
+  }
+  div[style*="repeat(3,1fr)"] > div {
+    padding: 12px 10px !important;
+  }
+  div[style*="repeat(3,1fr)"] > div > div:first-child {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+  }
+  div[style*="repeat(3,1fr)"] > div > div:nth-child(2) {
+    font-size: 20px !important;
+  }
+  div[style*="repeat(3,1fr)"] > div > div:nth-child(3) {
+    font-size: 11px !important;
+  }
+
+  /* Room grid: 2 columns */
+  div[style*="minmax(240px,1fr)"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Device grid: 1 column */
+  div[style*="minmax(280px,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pin grid: 2 columns */
+  div[style*="minmax(200px,1fr)"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Modals: add margin so they don't touch edges */
+  div[style*="maxWidth: '400px'"],
+  div[style*="maxWidth: '420px'"],
+  div[style*="maxWidth: '440px'"],
+  div[style*="maxWidth: '380px'"] {
+    margin: 16px !important;
+    width: calc(100% - 32px) !important;
+    padding: 24px 20px !important;
+  }
+
+  /* Header rows: wrap on small screens */
+  div[style*="justifyContent: 'space-between'"][style*="alignItems: 'center'"] {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Auth card: reduce padding on small screens */
+  div[style*="padding: \"40px 48px\""],
+  div[style*='padding: "40px 48px"'] {
+    padding: 24px 20px !important;
+  }
+
+  /* Landing hero: reduce top padding */
+  section[style*="100px 24px 80px"] {
+    padding: 48px 16px 40px !important;
+  }
+
+  /* Landing navbar: reduce padding */
+  nav[style*="padding: \"0 32px\""],
+  nav[style*="padding: '0 32px'"] {
+    padding: 0 16px !important;
+  }
+
+  /* Voice page navbar */
+  div[style*="padding: '0 32px'"][style*="height: '60px'"] {
+    padding: 0 16px !important;
+  }
+
+  /* Hero mock preview: hide on very small to avoid overflow */
+  div[style*="maxWidth: \"800px\""][style*="margin: \"64px auto 0\""] {
+    display: none !important;
+  }
+
+  /* Landing CTA: smaller font */
+  section[style*="padding: \"80px 24px\""] h2 {
+    font-size: 26px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  /* Room grid: 1 column on very small */
+  div[style*="minmax(240px,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Pin grid: 1 column */
+  div[style*="minmax(200px,1fr)"] {
+    grid-template-columns: 1fr !important;
+  }
+}

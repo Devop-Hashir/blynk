@@ -69,7 +69,7 @@ export default function VoiceCommandsPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#f0f0f0', fontFamily: "'Segoe UI', sans-serif" }}>
       {/* Navbar */}
-      <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 32px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 16px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: '36px', height: '36px', background: '#d4f532', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
             <span style={{ fontWeight: '900', fontSize: '20px' }}>B</span>
@@ -79,7 +79,7 @@ export default function VoiceCommandsPage() {
         <Link href="/dashboard" style={{ fontSize: '13px', color: '#4fa3e3', textDecoration: 'none' }}>← Dashboard</Link>
       </div>
 
-      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 24px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 16px' }}>
         {error && (
           <div style={{ background: '#fff0f0', border: '1px solid #ffcccc', borderRadius: '8px', padding: '12px 16px', marginBottom: '20px', fontSize: '13px', color: '#cc0000', display: 'flex', justifyContent: 'space-between' }}>
             {error}
@@ -87,7 +87,7 @@ export default function VoiceCommandsPage() {
           </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
           <div>
             <h1 style={{ fontSize: '24px', fontWeight: '800', color: '#111', margin: '0 0 4px' }}>🎙️ Voice Commands</h1>
             <p style={{ fontSize: '13px', color: '#888', margin: 0 }}>
