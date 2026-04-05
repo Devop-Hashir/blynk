@@ -20,14 +20,16 @@ io.on("connection", (socket) => {
   console.log(`New connection: ${socket.id}`);
 
   // ── ESP32 registers ────────────────────────────
-  socket.on("device_register", (data) => {
-    // join a room named after deviceId
-    socket.join(data.deviceId);
-    socket.deviceId = data.deviceId;
-    socket.clientType = "device";
-    console.log(`✅ Device registered: ${data.deviceId}`);
-    socket.emit("registered", { message: "Device connected" });
-  });
+socket.on("device_register", (data) => {
+  socket.join(data.deviceId);
+  socket.deviceId = data.deviceId;
+  socket.clientType = "device";
+  console.log(`✅ Device registered: ${data.deviceId}`);
+  socket.emit("registered", { message: "Device connected" });
+  
+  // ← tell all dashboards device is online
+  io.emit("device_online", { deviceId: data.deviceId });
+});
 
   // ── Dashboard registers ────────────────────────
   socket.on("dashboard_register", (data) => {
@@ -75,6 +77,10 @@ io.on("connection", (socket) => {
 
 // make io accessible in controllers
 app.set("io", io);
+// add this route to test
+app.get('/test', (req, res) => {
+  res.json({ message: 'Backend working!' })
+})
 
 server.listen(5000, () => {
   console.log("🚀 Server running on port 5000");
