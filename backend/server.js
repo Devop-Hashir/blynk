@@ -23,16 +23,23 @@ const io = new Server(server, {
 // ─── Plain WS server (ESP32) ──────────────────
 const wss = new WebSocketServer({ noServer: true });
 
-// intercept upgrades — route /device to wss, everything else to socket.io
+// socket.io attaches its own 'upgrade' listener — we need to intercept first.
+// Remove socket.io's listener, then re-add our own that routes correctly.
+const sioListeners = server.listeners("upgrade").slice();
+server.removeAllListeners("upgrade");
+
 server.on("upgrade", (req, socket, head) => {
   const url = req.url || "";
   if (url.startsWith("/device")) {
+    // ESP32 plain WebSocket
     wss.handleUpgrade(req, socket, head, (ws) => {
       wss.emit("connection", ws, req);
     });
   } else {
-    // let socket.io handle its own upgrade
-    io.engine.handleUpgrade(req, socket, head);
+    // restore socket.io's original upgrade handler
+    for (const listener of sioListeners) {
+      listener.call(server, req, socket, head);
+    }
   }
 });
 
