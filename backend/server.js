@@ -29,14 +29,15 @@ const sioListeners = server.listeners("upgrade").slice();
 server.removeAllListeners("upgrade");
 
 server.on("upgrade", (req, socket, head) => {
-  const url = req.url || "";
-  if (url.startsWith("/device")) {
-    // ESP32 plain WebSocket
+  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+  
+  // Use pathname to ignore query strings or slight formatting differences
+  if (pathname === "/device" || pathname === "/device/") {
     wss.handleUpgrade(req, socket, head, (ws) => {
       wss.emit("connection", ws, req);
     });
   } else {
-    // restore socket.io's original upgrade handler
+    // Hand off to Socket.io
     for (const listener of sioListeners) {
       listener.call(server, req, socket, head);
     }
