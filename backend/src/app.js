@@ -14,7 +14,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
-app.use("/api/devices", deviceRoutes);
+app.use("/api/device", deviceRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/voice-commands", voiceCommandRoutes);
 
