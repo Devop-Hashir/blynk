@@ -143,7 +143,7 @@ function DevicePageInner() {
         </div>
 
         {/* ESP32 hint */}
-        <div style={{ background: '#111', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px', borderLeft: '4px solid #3F8F3A' }}>
+        <div style={{ background: '#111', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px' }}>
           <div style={{ fontSize: '11px', fontWeight: '700', color: '#3F8F3A', marginBottom: '8px', letterSpacing: '0.08em' }}>
             ESP32 SKETCH — USE THIS DEVICE ID
           </div>
