@@ -4,7 +4,6 @@ function getToken() {
   if (typeof document === 'undefined') return null
   return document.cookie.split('; ').find(r => r.startsWith('token='))?.split('=')[1] || null
 }
-
 export function getUserId() {
   const token = getToken()
   if (!token) return null
@@ -32,6 +31,14 @@ async function request(path, options = {}) {
     },
   })
   const data = await res.json()
+  
+  if (res.status === 401) {
+    // Clear bad token and redirect to login
+    document.cookie = 'token=; path=/; max-age=0'
+    window.location.href = '/auth/login'
+    return
+  }
+  
   if (!res.ok) throw new Error(data.message || 'Request failed')
   return data
 }
