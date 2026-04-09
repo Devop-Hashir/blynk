@@ -9,8 +9,12 @@ import Toggle from '../components/Toggle'
 import ErrorBar from '../components/ErrorBar'
 import { inp, lbl } from '../styles/common'
 
+
 const ICONS = { light: '💡', fan: '🌀', ac: '❄️', tv: '📺', plug: '🔌', door: '🚪', other: '⚙️' }
-const ALL_PINS = Array.from({ length: 14 }, (_, i) => `D${i}`)
+
+// Pin numbers 1-4 map to ESP32 relays
+// 1 → GPIO2 (Relay1), 2 → GPIO4 (Relay2), 3 → GPIO5 (Relay3), 4 → GPIO18 (Relay4)
+const ALL_PINS = ['1', '2', '3', '4']
 
 function DevicePageInner() {
   const router = useRouter()
@@ -20,10 +24,10 @@ function DevicePageInner() {
   const [userId, setUserId] = useState(null)
   const [device, setDevice] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [pinForm, setPinForm] = useState({ pinNumber: 'D0', label: '' })
+  const [pinForm, setPinForm] = useState({ pinNumber: '1', label: '' })
   const [showPinModal, setShowPinModal] = useState(false)
   const [error, setError] = useState('')
-  const [isOnline, setIsOnline] = useState(false) // ← separate online state
+  const [isOnline, setIsOnline] = useState(false)
 
   const { socket, connected, controlPin, isDeviceOnline } = useSocket(userId)
   useEffect(() => { setUserId(getUserId()) }, [])
@@ -41,11 +45,8 @@ function DevicePageInner() {
 
   useEffect(() => { loadDevice() }, [loadDevice])
 
-  // ─── update online status from socket ────────
   useEffect(() => {
-    if (deviceId) {
-      setIsOnline(isDeviceOnline(deviceId))
-    }
+    if (deviceId) setIsOnline(isDeviceOnline(deviceId))
   }, [deviceId, isDeviceOnline])
 
   useEffect(() => {
@@ -58,20 +59,9 @@ function DevicePageInner() {
         pins: prev.pins.map(p => p.pinNumber === pin ? { ...p, state } : p)
       }))
     }
-
-    const onOnline = ({ deviceId: dId }) => {
-      if (dId !== deviceId) return
-      setIsOnline(true)
-    }
-
-    const onOffline = ({ deviceId: dId }) => {
-      if (dId !== deviceId) return
-      setIsOnline(false)
-    }
-
-    const onOnlineDevices = ({ deviceIds }) => {
-      setIsOnline(deviceIds.includes(deviceId))
-    }
+    const onOnline = ({ deviceId: dId }) => { if (dId === deviceId) setIsOnline(true) }
+    const onOffline = ({ deviceId: dId }) => { if (dId === deviceId) setIsOnline(false) }
+    const onOnlineDevices = ({ deviceIds }) => { setIsOnline(deviceIds.includes(deviceId)) }
 
     socket.on('status_update', onStatus)
     socket.on('device_online', onOnline)
@@ -99,10 +89,10 @@ function DevicePageInner() {
   const handleAddPin = async () => {
     if (!pinForm.label.trim()) return
     try {
-      await api.addPin(deviceId, pinForm)
+      await api.addPin(deviceId, { pinNumber: pinForm.pinNumber, label: pinForm.label })
       await loadDevice()
       setShowPinModal(false)
-      setPinForm({ pinNumber: 'D0', label: '' })
+      setPinForm({ pinNumber: '1', label: '' })
     } catch (e) { setError(e.message) }
   }
 
@@ -117,7 +107,7 @@ function DevicePageInner() {
   if (loading) return <div style={{ padding: '60px', textAlign: 'center', color: '#888' }}>Loading...</div>
   if (!device) return null
 
-  const usedPins = device.pins.map(p => p.pinNumber)
+  const usedPins = device.pins.map(p => String(p.pinNumber))
   const availablePins = ALL_PINS.filter(p => !usedPins.includes(p))
 
   return (
@@ -145,7 +135,6 @@ function DevicePageInner() {
               <h1 style={{ fontSize: '22px', fontWeight: '800', color: '#111', margin: '0 0 4px' }}>{device.name}</h1>
               <div style={{ fontSize: '13px', color: '#888' }}>{device.room} · {device.deviceId}</div>
             </div>
-            {/* ← uses isOnline state instead of device.isOnline */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: isOnline ? '#22c55e' : '#d1d5db' }} />
               <span style={{ fontSize: '12px', color: '#888' }}>{isOnline ? 'Online' : 'Offline'}</span>
@@ -154,23 +143,30 @@ function DevicePageInner() {
         </div>
 
         {/* ESP32 hint */}
-        <div style={{ background: '#111', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px', borderLeft: '4px solid #d4f532' }}>
-          <div style={{ fontSize: '11px', fontWeight: '700', color: '#d4f532', marginBottom: '8px', letterSpacing: '0.08em' }}>ESP32 SKETCH — USE THIS DEVICE ID</div>
+        <div style={{ background: '#111', borderRadius: '12px', padding: '20px 24px', marginBottom: '24px', borderLeft: '4px solid #3F8F3A' }}>
+          <div style={{ fontSize: '11px', fontWeight: '700', color: '#3F8F3A', marginBottom: '8px', letterSpacing: '0.08em' }}>
+            ESP32 SKETCH — USE THIS DEVICE ID
+          </div>
           <code style={{ fontSize: '13px', color: '#e5e7eb', fontFamily: 'monospace' }}>
-            {`const char* deviceId = "${device.deviceId}";`}
+            {`const char* DEVICE_ID = "${device.deviceId}";`}
           </code>
-          <div style={{ fontSize: '11px', color: '#555', marginTop: '8px' }}>Flash once in Arduino IDE. Connect to ws://YOUR_PC_IP:5000</div>
+          <div style={{ fontSize: '11px', color: '#6b7280', marginTop: '12px', lineHeight: 1.8 }}>
+            Pin numbers: <span style={{ color: '#3F8F3A' }}>1</span> → GPIO2 &nbsp;
+            <span style={{ color: '#3F8F3A' }}>2</span> → GPIO4 &nbsp;
+            <span style={{ color: '#3F8F3A' }}>3</span> → GPIO5 &nbsp;
+            <span style={{ color: '#3F8F3A' }}>4</span> → GPIO18
+          </div>
         </div>
 
-        {/* Pins */}
+        {/* Pins section */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#111', margin: 0 }}>
-            Pins <span style={{ color: '#888', fontWeight: 400, fontSize: '13px' }}>({device.pins.length})</span>
+            Pins <span style={{ color: '#888', fontWeight: 400, fontSize: '13px' }}>({device.pins.length}/4)</span>
           </h2>
           {availablePins.length > 0 && (
             <button
               onClick={() => { setPinForm({ pinNumber: availablePins[0], label: '' }); setShowPinModal(true) }}
-              style={{ background: '#d4f532', border: 'none', borderRadius: '6px', padding: '7px 14px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', color: '#111' }}>
+              style={{ background: '#3F8F3A', border: 'none', borderRadius: '6px', padding: '7px 14px', fontWeight: '700', fontSize: '13px', cursor: 'pointer', color: 'white' }}>
               + Add Pin
             </button>
           )}
@@ -179,15 +175,18 @@ function DevicePageInner() {
         {device.pins.length === 0 ? (
           <div style={{ background: '#fff', borderRadius: '12px', padding: '48px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>🔌</div>
-            <p style={{ color: '#888', fontSize: '14px', margin: '0 0 16px' }}>No pins yet. Add a pin to control an appliance.</p>
+            <p style={{ color: '#888', fontSize: '14px', margin: '0 0 4px' }}>No pins yet.</p>
+            <p style={{ color: '#bbb', fontSize: '12px', margin: '0 0 20px' }}>
+              Add pins 1–4. Each maps to a relay on the ESP32.
+            </p>
             <button
-              onClick={() => { setPinForm({ pinNumber: 'D0', label: '' }); setShowPinModal(true) }}
-              style={{ background: '#d4f532', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}>
+              onClick={() => { setPinForm({ pinNumber: '1', label: '' }); setShowPinModal(true) }}
+              style={{ background: '#3F8F3A', border: 'none', borderRadius: '6px', padding: '8px 20px', fontWeight: '700', fontSize: '13px', cursor: 'pointer' }}>
               + Add Pin
             </button>
           </div>
         ) : (
-          <div className="pin-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
             {device.pins.map(pin => (
               <PinCard
                 key={pin.pinNumber}
@@ -203,21 +202,42 @@ function DevicePageInner() {
       {showPinModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <div style={{ background: '#fff', borderRadius: '14px', padding: '32px', width: '100%', maxWidth: '380px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}>
-            <h2 style={{ margin: '0 0 24px', fontSize: '18px', fontWeight: '700', color: '#111' }}>Add Pin</h2>
-            <label style={lbl}>Pin Number</label>
-            <select value={pinForm.pinNumber} onChange={e => setPinForm(f => ({ ...f, pinNumber: e.target.value }))} style={inp}>
-              {availablePins.map(p => <option key={p} value={p}>{p}</option>)}
+            <h2 style={{ margin: '0 0 8px', fontSize: '18px', fontWeight: '700', color: '#111' }}>Add Pin</h2>
+            <p style={{ margin: '0 0 24px', fontSize: '12px', color: '#888' }}>
+              Pin 1 = Relay 1 (GPIO2), Pin 2 = Relay 2 (GPIO4), etc.
+            </p>
+
+            <label style={lbl}>Pin Number (1–4)</label>
+            <select
+              value={pinForm.pinNumber}
+              onChange={e => setPinForm(f => ({ ...f, pinNumber: e.target.value }))}
+              style={inp}>
+              {availablePins.map(p => (
+                <option key={p} value={p}>Pin {p}</option>
+              ))}
             </select>
+
             <label style={lbl}>Label</label>
             <input
               value={pinForm.label}
               onChange={e => setPinForm(f => ({ ...f, label: e.target.value }))}
               placeholder="e.g. Ceiling Light"
               style={inp}
+              autoFocus
             />
+
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setShowPinModal(false)} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
-              <button onClick={handleAddPin} disabled={!pinForm.label.trim()} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: pinForm.label.trim() ? '#d4f532' : '#e8e8e8', cursor: pinForm.label.trim() ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>Add Pin</button>
+              <button
+                onClick={() => setShowPinModal(false)}
+                style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>
+                Cancel
+              </button>
+              <button
+                onClick={handleAddPin}
+                disabled={!pinForm.label.trim()}
+                style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: pinForm.label.trim() ? '#3F8F3A' : 'gray', cursor: pinForm.label.trim() ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: 'white' }}>
+                Add Pin
+              </button>
             </div>
           </div>
         </div>
@@ -228,17 +248,29 @@ function DevicePageInner() {
 
 function PinCard({ pin, onToggle, onRemove }) {
   const on = pin.state === 'ON'
+
+  const GPIO_MAP = { '1': 'GPIO2', '2': 'GPIO4', '3': 'GPIO5', '4': 'GPIO18' }
+
   return (
-    <div style={{ background: on ? '#111' : '#fff', borderRadius: '12px', padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', border: on ? '2px solid #d4f532' : '2px solid transparent', transition: 'all 0.2s' }}>
+    <div style={{
+      background: on ? '#111' : '#fff',
+      borderRadius: '12px',
+      padding: '20px',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+      border: on ? '2px solid #3F8F3A' : '2px solid transparent',
+      transition: 'all 0.2s'
+    }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
         <div>
           <div style={{ fontWeight: '700', fontSize: '14px', color: on ? '#fff' : '#111' }}>{pin.label}</div>
-          <div style={{ fontSize: '12px', color: on ? '#aaa' : '#888', marginTop: '2px' }}>{pin.pinNumber}</div>
+          <div style={{ fontSize: '11px', color: on ? '#666' : '#bbb', marginTop: '2px' }}>
+            Pin {pin.pinNumber} · {GPIO_MAP[String(pin.pinNumber)] || ''}
+          </div>
         </div>
         <button onClick={onRemove} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '13px', opacity: 0.4, padding: '2px' }}>🗑️</button>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '12px', fontWeight: '700', color: on ? '#d4f532' : '#aaa' }}>{pin.state}</span>
+        <span style={{ fontSize: '12px', fontWeight: '700', color: on ? 'white' : '#aaa' }}>{pin.state}</span>
         <Toggle on={on} onToggle={onToggle} />
       </div>
     </div>

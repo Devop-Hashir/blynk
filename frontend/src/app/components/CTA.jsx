@@ -21,8 +21,8 @@ export default function CTA() {
         <Link
           href="/auth/signup"
           style={{
-            background: "#d4f532",
-            color: "#111",
+            background: "#3F8F3A",
+            color: "white",
             fontWeight: "700",
             fontSize: "16px",
             padding: "16px 40px",

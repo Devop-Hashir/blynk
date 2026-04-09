@@ -9,137 +9,139 @@ connectDB();
 
 const server = http.createServer(app);
 
-// ─── shared state ─────────────────────────────
-const onlineDevices = new Map(); // deviceId → ws socket
+const onlineDevices = new Map();
 
-// ─── Socket.io (dashboard) ────────────────────
+const wss = new WebSocketServer({ noServer: true });
+
 const io = new Server(server, {
   cors: { origin: "*", methods: ["GET", "POST"] },
-  transports: ["polling", "websocket"],
-  allowEIO3: true,
   path: "/socket.io/",
 });
 
-// ─── Plain WS server (ESP32) ──────────────────
-const wss = new WebSocketServer({ noServer: true });
-
-// socket.io attaches its own 'upgrade' listener — we need to intercept first.
-// Remove socket.io's listener, then re-add our own that routes correctly.
-const sioListeners = server.listeners("upgrade").slice();
+// Capture Socket.IO upgrade listeners AFTER it registers them
+const sioUpgradeListeners = server.listeners("upgrade").slice();
 server.removeAllListeners("upgrade");
 
 server.on("upgrade", (req, socket, head) => {
-  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
-  
-  // Use pathname to ignore query strings or slight formatting differences
-  if (pathname === "/device" || pathname === "/device/") {
+  const pathname = new URL(req.url, `http://${req.headers.host}`).pathname;
+  console.log(`[UPGRADE] path="${pathname}"`);
+
+  if (pathname === "/device") {
     wss.handleUpgrade(req, socket, head, (ws) => {
       wss.emit("connection", ws, req);
     });
   } else {
-    // Hand off to Socket.io
-    for (const listener of sioListeners) {
-      listener.call(server, req, socket, head);
+    for (const fn of sioUpgradeListeners) {
+      fn.call(server, req, socket, head);
     }
   }
 });
 
-// ─── ESP32 WS handlers ────────────────────────
-wss.on("connection", (ws) => {
-  console.log("🔌 ESP32 raw WS connected");
+// ── ESP32 handler ─────────────────────────────────────────────────────────────
+wss.on("connection", (ws, req) => {
+  const ip = req.socket.remoteAddress;
+  console.log(`\n[ESP32] ✅ Raw WS connected from ${ip}`);
   let deviceId = null;
 
   ws.on("message", (raw) => {
-    let data;
-    try { data = JSON.parse(raw); } catch { return; }
+    const str = raw.toString();
+    console.log(`[ESP32 →  SERVER] ${str}`);
 
-    if (data.type === "device_register") {
+    let data;
+    try { data = JSON.parse(str); }
+    catch { console.log("[ESP32] ❌ Bad JSON"); return; }
+
+    if (data.type === "register") {
       deviceId = data.deviceId;
       ws.deviceId = deviceId;
       onlineDevices.set(deviceId, ws);
-      console.log(`✅ Device registered: ${deviceId}`);
-      console.log(`📱 Online devices now: ${[...onlineDevices.keys()]}`);
-      ws.send(JSON.stringify({ type: "registered", message: "Device connected" }));
+
+      const reply = JSON.stringify({ type: "registered", deviceId });
+      console.log(`[SERVER → ESP32] ${reply}`);
+      ws.send(reply);
+
       io.emit("device_online", { deviceId });
+      io.emit("online_devices", { deviceIds: [...onlineDevices.keys()] });
+      console.log(`[SERVER → DASHBOARD] device_online + online_devices: [${[...onlineDevices.keys()]}]`);
     }
 
-    if (data.type === "status_update") {
-      io.to(data.userId).emit("status_update", {
+    if (data.type === "state_update") {
+      console.log(`[SERVER → DASHBOARD] status_update pin=${data.pin} state=${data.state}`);
+      io.emit("status_update", {
         deviceId: data.deviceId,
         pin: data.pin,
         state: data.state,
       });
     }
 
-    if (data.type === "ping") {
-      ws.send(JSON.stringify({ type: "pong" }));
+    if (data.type === "pong") {
+      console.log(`[ESP32] pong received`);
     }
   });
 
-  ws.on("close", () => {
+  ws.on("close", (code, reason) => {
+    console.log(`\n[ESP32] ❌ Disconnected — code=${code} reason="${reason.toString()}"`);
     if (deviceId) {
       onlineDevices.delete(deviceId);
-      console.log(`❌ Device disconnected: ${deviceId}`);
-      console.log(`📱 Online devices now: ${[...onlineDevices.keys()]}`);
       io.emit("device_offline", { deviceId });
+      io.emit("online_devices", { deviceIds: [...onlineDevices.keys()] });
     }
   });
 
-  ws.on("error", (err) => console.error("ESP32 WS error:", err.message));
+  ws.on("error", (err) => {
+    console.log(`[ESP32] ⚠️ WS error: ${err.message}`);
+  });
 });
 
-// ─── Socket.io handlers (dashboard) ──────────
+// ── Dashboard handler ─────────────────────────────────────────────────────────
 io.on("connection", (socket) => {
-  console.log(`New connection: ${socket.id}`);
+  console.log(`\n[DASHBOARD] ✅ Connected: ${socket.id}`);
 
-  socket.on("dashboard_register", (data) => {
-    socket.join(data.userId);
-    socket.userId     = data.userId;
-    socket.clientType = "dashboard";
-    console.log(`✅ Dashboard registered: ${data.userId}`);
-
-    const sendOnline = () => {
-      const deviceIds = [...onlineDevices.keys()];
-      console.log(`Sending online devices to dashboard: ${deviceIds}`);
-      socket.emit("online_devices", { deviceIds });
-    };
-    sendOnline();
-    setTimeout(sendOnline, 1000);
+  socket.on("dashboard_register", ({ userId }) => {
+    socket.join(userId);
+    socket.userId = userId;
+    const deviceIds = [...onlineDevices.keys()];
+    console.log(`[DASHBOARD] Registered userId=${userId} — sending online_devices: [${deviceIds}]`);
+    socket.emit("online_devices", { deviceIds });
   });
 
   socket.on("get_online_devices", () => {
     const deviceIds = [...onlineDevices.keys()];
-    console.log(`Re-sending online devices: ${deviceIds}`);
+    console.log(`[DASHBOARD] get_online_devices → [${deviceIds}]`);
     socket.emit("online_devices", { deviceIds });
   });
 
-  socket.on("control", (data) => {
-    console.log(`Control: device=${data.deviceId} pin=${data.pin} state=${data.state}`);
-    const deviceWs = onlineDevices.get(data.deviceId);
-    if (deviceWs && deviceWs.readyState === 1) {
-      deviceWs.send(JSON.stringify({ type: "command", pin: data.pin, state: data.state }));
+  socket.on("control", ({ deviceId, pin, state }) => {
+    console.log(`\n[DASHBOARD → SERVER] control deviceId=${deviceId} pin=${pin} state=${state}`);
+    const deviceWs = onlineDevices.get(deviceId);
+    if (deviceWs && deviceWs.readyState === deviceWs.OPEN) {
+      const cmd = JSON.stringify({ type: "command", pin, state });
+      console.log(`[SERVER → ESP32] ${cmd}`);
+      deviceWs.send(cmd);
     } else {
-      console.log(`Device ${data.deviceId} not connected`);
+      console.log(`[SERVER] ❌ Device ${deviceId} not in onlineDevices map — cannot forward`);
+      console.log(`[SERVER] Current online devices: [${[...onlineDevices.keys()]}]`);
+      socket.emit("device_error", { deviceId, message: "Device is offline" });
     }
   });
 
-  socket.on("disconnect", () => {
-    if (socket.clientType === "dashboard") {
-      console.log(`Dashboard disconnected: ${socket.userId}`);
-    }
+  socket.on("disconnect", (reason) => {
+    console.log(`[DASHBOARD] ❌ Disconnected: ${socket.id} reason=${reason}`);
   });
 });
 
 app.set("io", io);
 app.set("onlineDevices", onlineDevices);
 
-app.get("/test", (req, res) => {
-  res.json({
-    message: "Backend working!",
-    onlineDevices: [...onlineDevices.keys()],
-  });
+app.get("/health", (req, res) => {
+  const deviceIds = [...onlineDevices.keys()];
+  console.log(`[HEALTH] online devices: [${deviceIds}]`);
+  res.json({ status: "ok", onlineDevices: deviceIds });
 });
 
-server.listen(5000, () => {
-  console.log("🚀 Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`\n🚀 Server on http://localhost:${PORT}`);
+  console.log(`   ESP32  → ws://localhost:${PORT}/device`);
+  console.log(`   Dash   → http://localhost:${PORT}/socket.io/\n`);
 });

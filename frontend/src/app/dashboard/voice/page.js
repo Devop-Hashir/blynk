@@ -71,10 +71,10 @@ export default function VoiceCommandsPage() {
       {/* Navbar */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 16px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '36px', height: '36px', background: '#d4f532', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
+          <div style={{ width: '36px', height: '36px', background: '#3F8F3A', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
             <span style={{ fontWeight: '900', fontSize: '20px' }}>B</span>
           </div>
-          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111' }}>Blynk</span>
+          <span style={{ fontWeight: '700', fontSize: '18px', color: '#111' }}>AutoHome</span>
         </div>
         <Link href="/dashboard" style={{ fontSize: '13px', color: '#4fa3e3', textDecoration: 'none' }}>← Dashboard</Link>
       </div>
@@ -94,14 +94,14 @@ export default function VoiceCommandsPage() {
               Create custom phrases to control your devices by voice.
             </p>
           </div>
-          <button onClick={openAdd} style={{ background: '#d4f532', border: 'none', borderRadius: '8px', padding: '10px 18px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', color: '#111' }}>
+          <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 18px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', color: 'white' }}>
             + Add Command
           </button>
         </div>
 
         {/* How it works */}
-        <div style={{ background: '#111', borderRadius: '12px', padding: '18px 22px', margin: '24px 0', borderLeft: '4px solid #d4f532' }}>
-          <div style={{ fontSize: '12px', fontWeight: '700', color: '#d4f532', marginBottom: '8px', letterSpacing: '0.06em' }}>HOW IT WORKS</div>
+        <div style={{ background: '#111', borderRadius: '12px', padding: '18px 22px', margin: '24px 0' }}>
+          <div style={{ fontSize: '12px', fontWeight: '700', color: 'white', marginBottom: '8px', letterSpacing: '0.06em' }}>HOW IT WORKS</div>
           <div style={{ fontSize: '13px', color: '#ccc', lineHeight: 1.7 }}>
             1. Add a command with a phrase you&apos;ll say, e.g. <code style={{ background: '#222', padding: '1px 6px', borderRadius: '4px' }}>turn on fan</code><br />
             2. Link it to a device pin and set the action (ON or OFF)<br />
@@ -119,7 +119,7 @@ export default function VoiceCommandsPage() {
             <p style={{ fontSize: '14px', color: '#888', margin: '0 0 24px' }}>
               Add your first command to start controlling devices by voice.
             </p>
-            <button onClick={openAdd} style={{ background: '#d4f532', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>
+            <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>
               + Add Command
             </button>
           </div>
@@ -142,7 +142,7 @@ export default function VoiceCommandsPage() {
                 {/* action badge */}
                 <div style={{
                   padding: '4px 14px', borderRadius: '20px', fontWeight: '700', fontSize: '12px',
-                  background: cmd.action === 'ON' ? '#d4f532' : '#111',
+                  background: cmd.action === 'ON' ? '#3F8F3A' : '#111',
                   color: cmd.action === 'ON' ? '#111' : '#fff'
                 }}>
                   {cmd.action}
@@ -209,7 +209,7 @@ export default function VoiceCommandsPage() {
                 <button key={a} onClick={() => setForm(f => ({ ...f, action: a }))} style={{
                   flex: 1, padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700',
                   fontSize: '14px', cursor: 'pointer',
-                  background: form.action === a ? (a === 'ON' ? '#d4f532' : '#111') : '#f0f0f0',
+                  background: form.action === a ? (a === 'ON' ? '#3F8F3A' : '#111') : '#f0f0f0',
                   color: form.action === a ? (a === 'ON' ? '#111' : '#fff') : '#888'
                 }}>{a}</button>
               ))}
@@ -217,7 +217,7 @@ export default function VoiceCommandsPage() {
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
-              <button onClick={handleSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#d4f532' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
+              <button onClick={handleSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
                 {editCmd ? 'Save' : 'Add Command'}
               </button>
             </div>

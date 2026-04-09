@@ -27,12 +27,12 @@ export default function Navbar({ userEmail, connected, onLogout, showVoice = fal
       {/* Logo */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
         <div style={{
-          width: '34px', height: '34px', background: '#d4f532',
+          width: '34px', height: '34px', background: '#3F8F3A',
           display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
         }}>
-          <span style={{ fontWeight: '900', fontSize: '18px', color: '#000' }}>B</span>
+          <span style={{ fontWeight: '900', fontSize: '18px', color: 'white' }}>A</span>
         </div>
-        <span style={{ fontWeight: '700', fontSize: '17px', color: '#111' }}>Blynk</span>
+        <span style={{ fontWeight: '700', fontSize: '17px', color: '#111' }}>AutoHome</span>
       </div>
 
       {/* Right side */}

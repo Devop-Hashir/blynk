@@ -11,14 +11,14 @@ export default function Footer() {
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{
-            width: "26px", height: "26px", background: "#d4f532",
+            width: "26px", height: "26px", background: "#3F8F3A", color:"white ",
             display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "3px"
           }}>
-            <span style={{ fontWeight: "900", fontSize: "14px" }}>B</span>
+            <span style={{ fontWeight: "900", fontSize: "14px" }}>A</span>
           </div>
-          <span style={{ fontWeight: "700", fontSize: "14px", color: "#111" }}>Blynk</span>
+          <span style={{ fontWeight: "700", fontSize: "14px", color: "#111" }}>AutoHome</span>
         </div>
-        <span style={{ fontSize: "13px", color: "#aaa" }}>© {new Date().getFullYear()} Blynk. All rights reserved.</span>
+        <span style={{ fontSize: "13px", color: "#aaa" }}>© {new Date().getFullYear()} AutoHome. All rights reserved.</span>
         <div style={{ display: "flex", gap: "20px" }}>
           <Link href="/auth/login" style={{ fontSize: "13px", color: "#888", textDecoration: "none" }}>Login</Link>
           <Link href="/auth/signup" style={{ fontSize: "13px", color: "#888", textDecoration: "none" }}>Sign Up</Link>

@@ -34,3 +34,24 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+                                If you want more pins 
+
+Just add more pins to the arrays in your .ino:
+// Change these two lines
+
+#define RELAY5_PIN 19
+#define RELAY6_PIN 21
+#define RELAY7_PIN 22
+#define RELAY8_PIN 23
+
+const int relayPins[8] = { RELAY1_PIN, RELAY2_PIN, RELAY3_PIN, RELAY4_PIN,
+                            RELAY5_PIN, RELAY6_PIN, RELAY7_PIN, RELAY8_PIN };
+const int buttonPins[8] = { BUTTON1_PIN, BUTTON2_PIN, BUTTON3_PIN, BUTTON4_PIN,
+                             ... }; // add more buttons or remove if no physical buttons
+// Change every loop that says < 4 to < 8
+for (int i = 0; i < 8; i++) { ... }
+
+
+And in device_page.jsx change:
+const ALL_PINS = ['1', '2', '3', '4', '5', '6', '7', '8']

@@ -10,7 +10,7 @@ export const inp = {
 }
 
 export const btnPrimary = {
-  background: '#d4f532', border: 'none', borderRadius: '8px',
+  background: '#3F8F3A', border: 'none', borderRadius: '8px',
   padding: '10px 20px', fontWeight: '700', fontSize: '14px',
-  cursor: 'pointer', color: '#111'
+  cursor: 'pointer', color: 'white'
 }

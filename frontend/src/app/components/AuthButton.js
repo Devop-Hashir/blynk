@@ -9,8 +9,8 @@ export default function AuthButton({ children, onClick, disabled }) {
       style={{
         width: "100%",
         padding: "12px",
-        backgroundColor: disabled ? "#e8e8e8" : "#d4f532",
-        color: disabled ? "#999" : "#111",
+        backgroundColor: disabled ? "#e8e8e8" : "#3F8F3A",
+        color: disabled ? "#999" : "white",
         fontWeight: "700",
         fontSize: "15px",
         border: "none",
@@ -19,8 +19,8 @@ export default function AuthButton({ children, onClick, disabled }) {
         marginBottom: "20px",
         transition: "background-color 0.2s",
       }}
-      onMouseEnter={(e) => { if (!disabled) e.target.style.backgroundColor = "#c2e020" }}
-      onMouseLeave={(e) => { if (!disabled) e.target.style.backgroundColor = "#d4f532" }}
+      onMouseEnter={(e) => { if (!disabled) e.target.style.backgroundColor = "#44cc00" }}
+      onMouseLeave={(e) => { if (!disabled) e.target.style.backgroundColor = "#3F8F3A" }}
     >
       {children}
     </button>

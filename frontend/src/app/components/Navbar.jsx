@@ -1,41 +1,75 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link";
+import React from "react";
 
 export default function Navbar() {
   return (
     <div>
-            <nav style={{
-        position: "sticky", top: 0, zIndex: 50,
-        background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)",
-        borderBottom: "1px solid #f0f0f0",
-        padding: "0 16px", height: "60px",
-        display: "flex", alignItems: "center", justifyContent: "space-between"
-      }}>
+      <nav
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "rgba(255,255,255,0.95)",
+          backdropFilter: "blur(8px)",
+          borderBottom: "1px solid #f0f0f0",
+          padding: "0 16px",
+          height: "60px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{
-            width: "34px", height: "34px", background: "#d4f532",
-            display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "4px"
-          }}>
-            <span style={{ fontWeight: "900", fontSize: "18px", color: "#000" }}>B</span>
+          <div
+            style={{
+              width: "34px",
+              height: "34px",
+              background: "#3F8F3A",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "4px",
+            }}
+          >
+            <span
+              style={{ fontWeight: "900", fontSize: "18px", color: "white" }}
+            >
+              A
+            </span>
           </div>
-          <span style={{ fontWeight: "800", fontSize: "18px", color: "#111" }}>Blynk</span>
+          <span style={{ fontWeight: "800", fontSize: "18px", color: "#111" }}>
+            AutoHome
+          </span>
         </div>
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          <Link href="/auth/login" style={{
-            fontSize: "14px", fontWeight: "600", color: "#555",
-            textDecoration: "none", padding: "8px 16px"
-          }}>
+          <Link
+            href="/auth/login"
+            style={{
+              fontSize: "14px",
+              fontWeight: "600",
+              color: "#555",
+              textDecoration: "none",
+              padding: "8px 16px",
+            }}
+          >
             Log In
           </Link>
-          <Link href="/auth/signup" style={{
-            fontSize: "14px", fontWeight: "700", color: "#111",
-            textDecoration: "none", padding: "8px 18px",
-            background: "#d4f532", borderRadius: "6px"
-          }}>
+          <Link
+            href="/auth/signup"
+            style={{
+              fontSize: "14px",
+              fontWeight: "700",
+              color: "white",
+              textDecoration: "none",
+              padding: "8px 18px",
+              background: "#3F8F3A",
+              borderRadius: "6px",
+            }}
+          >
             Get Started
           </Link>
         </div>
       </nav>
     </div>
-  )
+  );
 }

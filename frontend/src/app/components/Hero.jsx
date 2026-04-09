@@ -14,12 +14,12 @@ export default function Hero() {
         <div
           style={{
             display: "inline-block",
-            background: "#d4f532",
+            background: "#3F8F3A",
             borderRadius: "20px",
             padding: "4px 14px",
             fontSize: "12px",
             fontWeight: "700",
-            color: "#111",
+            color: "white",
             marginBottom: "24px",
             letterSpacing: "0.05em",
           }}
@@ -41,8 +41,8 @@ export default function Hero() {
           <br />
           <span
             style={{
-              color: "#111",
-              background: "#d4f532",
+              color: "white",
+              background: "#3F8F3A",
               padding: "0 8px",
               borderRadius: "4px",
             }}
@@ -60,7 +60,7 @@ export default function Hero() {
             lineHeight: 1.6,
           }}
         >
-          Blynk lets you add home appliances, assign ESP32 GPIO pins, and toggle
+          AutoHome lets you add home appliances, assign ESP32 GPIO pins, and toggle
           them on or off — all from a clean dashboard.
         </p>
 
@@ -75,8 +75,8 @@ export default function Hero() {
           <Link
             href="/auth/signup"
             style={{
-              background: "#d4f532",
-              color: "#111",
+              background: "#3F8F3A",
+              color: "white",
               fontWeight: "700",
               fontSize: "15px",
               padding: "14px 32px",
@@ -220,7 +220,7 @@ export default function Hero() {
                     borderRadius: "10px",
                     padding: "16px",
                     border: d.on
-                      ? "2px solid #d4f532"
+                      ? "2px solid #3F8F3A"
                       : "2px solid transparent",
                   }}
                 >
@@ -250,7 +250,7 @@ export default function Hero() {
                       width: "36px",
                       height: "20px",
                       borderRadius: "10px",
-                      background: d.on ? "#d4f532" : "#ddd",
+                      background: d.on ? "#3F8F3A" : "#ddd",
                       position: "relative",
                     }}
                   >

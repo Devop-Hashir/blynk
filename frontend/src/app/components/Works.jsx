@@ -66,14 +66,14 @@ export default function Works() {
                   style={{
                     minWidth: "44px",
                     height: "44px",
-                    background: "#d4f532",
+                    background: "#3F8F3A",
                     borderRadius: "8px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontWeight: "900",
                     fontSize: "14px",
-                    color: "#111",
+                    color: "white",
                   }}
                 >
                   {s.step}

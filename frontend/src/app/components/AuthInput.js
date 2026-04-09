@@ -51,7 +51,7 @@ export default function AuthInput({
             boxSizing: "border-box",
             transition: "border-color 0.2s",
           }}
-          onFocus={(e) => (e.target.style.borderColor = "#d4f532")}
+          onFocus={(e) => (e.target.style.borderColor = "#3F8F3A")}
           onBlur={(e) => (e.target.style.borderColor = "#e0e0e0")}
         />
 

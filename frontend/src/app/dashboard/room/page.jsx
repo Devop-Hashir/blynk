@@ -136,7 +136,7 @@ function RoomPageInner() {
               {devices.length} device{devices.length !== 1 ? 's' : ''} · {activeCount} active · {onlineCount} online
             </p>
           </div>
-          <button onClick={openAdd} style={{ background: '#d4f532', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', color: '#111' }}>
+          <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 20px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', color: 'white' }}>
             + Add Device
           </button>
         </div>
@@ -146,7 +146,7 @@ function RoomPageInner() {
           <div style={{ background: '#fff', borderRadius: '12px', padding: '14px 20px', marginBottom: '28px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
               onClick={listening ? stopListening : startListening}
-              style={{ width: '44px', height: '44px', borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0, background: listening ? '#ff4444' : '#d4f532', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: listening ? '0 0 0 6px rgba(255,68,68,0.15)' : '0 2px 6px rgba(0,0,0,0.1)', animation: listening ? 'pulse 1.5s infinite' : 'none', transition: 'all 0.2s' }}
+              style={{ width: '44px', height: '44px', borderRadius: '50%', border: 'none', cursor: 'pointer', flexShrink: 0, background: listening ? '#ff4444' : '#3F8F3A', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: listening ? '0 0 0 6px rgba(255,68,68,0.15)' : '0 2px 6px rgba(0,0,0,0.1)', animation: listening ? 'pulse 1.5s infinite' : 'none', transition: 'all 0.2s' }}
             >
               {listening ? '⏹' : '🎙️'}
             </button>
@@ -175,7 +175,7 @@ function RoomPageInner() {
             <div style={{ fontSize: '44px', marginBottom: '16px' }}>🔌</div>
             <h2 style={{ fontSize: '18px', fontWeight: '700', color: '#111', margin: '0 0 8px' }}>No devices in this room</h2>
             <p style={{ fontSize: '14px', color: '#888', margin: '0 0 24px' }}>Add your ESP32 device to start controlling appliances.</p>
-            <button onClick={openAdd} style={{ background: '#d4f532', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>+ Add Device</button>
+            <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>+ Add Device</button>
           </div>
         )}
 
@@ -213,7 +213,7 @@ export default function RoomPage() {
 function DeviceCard({ device, isOnline, onToggle, onEdit, onDelete, onManage }) {
   const anyOn = device.pins.some(p => p.state === 'ON')
   return (
-    <div style={{ background: anyOn ? '#111' : '#fff', borderRadius: '14px', padding: '22px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', border: anyOn ? '2px solid #d4f532' : '2px solid transparent', transition: 'all 0.2s' }}>
+    <div style={{ background: anyOn ? '#111' : '#fff', borderRadius: '14px', padding: '22px', boxShadow: '0 1px 6px rgba(0,0,0,0.08)', border: anyOn ? '2px solid #3F8F3A' : '2px solid transparent', transition: 'all 0.2s' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '42px', height: '42px', background: anyOn ? '#222' : '#f5f5f5', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '22px' }}>
@@ -251,7 +251,7 @@ function DeviceCard({ device, isOnline, onToggle, onEdit, onDelete, onManage }) 
       )}
 
       <div style={{ borderTop: `1px solid ${anyOn ? '#2a2a2a' : '#f0f0f0'}`, paddingTop: '12px' }}>
-        <button onClick={onManage} style={{ width: '100%', padding: '8px', background: anyOn ? '#1a1a1a' : '#f5f5f5', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', color: anyOn ? '#d4f532' : '#333' }}>
+        <button onClick={onManage} style={{ width: '100%', padding: '8px', background: anyOn ? '#1a1a1a' : '#f5f5f5', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', color: anyOn ? 'white' : '#333' }}>
           Manage Pins →
         </button>
       </div>
@@ -278,7 +278,7 @@ function DeviceModal({ form, setForm, onSave, onClose, isEdit, roomName }) {
 
         <label style={lbl}>ESP32 ID</label>
         <input value={form.deviceId} onChange={e => set('deviceId', e.target.value.trim())} placeholder="e.g. esp32-home-01" style={{ ...inp, fontFamily: 'monospace' }} />
-        <div style={{ background: '#f7f7f7', borderRadius: '8px', padding: '12px 14px', marginTop: '-10px', marginBottom: '20px', fontSize: '11px', color: '#666', lineHeight: 1.8, borderLeft: '3px solid #d4f532' }}>
+        <div style={{ background: '#f7f7f7', borderRadius: '8px', padding: '12px 14px', marginTop: '-10px', marginBottom: '20px', fontSize: '11px', color: '#666', lineHeight: 1.8, borderLeft: '3px solid #3F8F3A' }}>
           <strong>📌 Flash this once in Arduino IDE:</strong><br />
           <code style={{ color: '#333' }}>const char* deviceId = "esp32-home-01";</code><br />
           One ESP32 = one fixed ID. Add multiple devices using same ID.
@@ -286,7 +286,7 @@ function DeviceModal({ form, setForm, onSave, onClose, isEdit, roomName }) {
 
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={onClose} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
-          <button onClick={onSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#d4f532' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
+          <button onClick={onSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
             {isEdit ? 'Save' : 'Add Device'}
           </button>
         </div>

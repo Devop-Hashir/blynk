@@ -136,7 +136,7 @@ export default function Dashboard() {
             >
               My Home
             </h1>
-            <p style={{ fontSize: "13px", color: "#888", margin: "4px 0 0" }}>
+            <p style={{ fontSize: "13px", color: "", margin: "4px 0 0" }}>
               {rooms.length} room{rooms.length !== 1 ? "s" : ""} ·{" "}
               {devices.length} device{devices.length !== 1 ? "s" : ""} ·{" "}
               {totalActive} active
@@ -400,7 +400,7 @@ function RoomCard({
             display: "inline-block",
             padding: "4px 12px",
             borderRadius: "20px",
-            background: activeCount > 0 ? "#d4f532" : "#f0f0f0",
+            background: activeCount > 0 ? "#3F8F3A" : "#f0f0f0",
             fontSize: "11px",
             fontWeight: "700",
             color: "#111",
@@ -474,7 +474,7 @@ function RoomModal({ form, setForm, onSave, onClose, isEdit }) {
                 border: "none",
                 fontSize: "20px",
                 cursor: "pointer",
-                background: form.icon === icon ? "#d4f532" : "#f5f5f5",
+                background: form.icon === icon ? "#3F8F3A" : "#f5f5f5",
               }}
             >
               {icon}
@@ -506,7 +506,7 @@ function RoomModal({ form, setForm, onSave, onClose, isEdit }) {
               padding: "10px",
               border: "none",
               borderRadius: "8px",
-              background: canSave ? "#d4f532" : "#e8e8e8",
+              background: canSave ? "#3F8F3A" : "#e8e8e8",
               cursor: canSave ? "pointer" : "not-allowed",
               fontSize: "14px",
               fontWeight: "700",

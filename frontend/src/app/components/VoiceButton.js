@@ -21,7 +21,7 @@ export default function VoiceButton({ listening, onStart, onStop, feedback, tran
         style={{
           width: '52px', height: '52px', borderRadius: '50%',
           border: 'none', cursor: 'pointer',
-          background: listening ? '#ff4444' : '#d4f532',
+          background: listening ? '#ff4444' : '#3F8F3A',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: '22px', transition: 'all 0.2s',
           boxShadow: listening ? '0 0 0 6px rgba(255,68,68,0.2)' : '0 2px 8px rgba(0,0,0,0.1)',

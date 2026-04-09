@@ -16,14 +16,14 @@ export default function AuthCard({ children }) {
       <div style={{
         width: "64px",
         height: "64px",
-        backgroundColor: "#d4f532",
+        backgroundColor: "#3F8F3A",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         marginBottom: "24px",
       }}>
-        <span style={{ fontSize: "36px", fontWeight: "900", color: "#000", lineHeight: 1 }}>
-          B
+        <span style={{ fontSize: "36px", fontWeight: "900", color: "white", lineHeight: 1 }}>
+          A
         </span>
       </div>
 

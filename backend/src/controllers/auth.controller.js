@@ -21,7 +21,7 @@ function emailWrapper(title, bodyHtml) {
                     <table cellpadding="0" cellspacing="0">
                       <tr>
                         <td align="center" valign="middle"
-                          style="width:64px;height:64px;background:#d4f532;border-radius:4px;">
+                          style="width:64px;height:64px;background:#3F8F3A;border-radius:4px;">
                           <span style="font-size:36px;font-weight:900;color:#000;line-height:1;">B</span>
                         </td>
                       </tr>
@@ -95,7 +95,7 @@ exports.signup = async (req, res) => {
       <tr>
         <td align="center" style="padding-bottom:16px;">
           <a href="${verifyURL}"
-            style="display:inline-block;background:#d4f532;color:#111;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
+            style="display:inline-block;background:#3F8F3A;color:white;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
             Verify Email
           </a>
         </td>
@@ -103,10 +103,10 @@ exports.signup = async (req, res) => {
     `;
 
     await resend.emails.send({
-      from: "Blynk <onboarding@resend.dev>",
+      from: "AutoHome <onboarding@resend.dev>",
       to: email,
-      subject: "Verify your Blynk account",
-      html: emailWrapper("Welcome to Blynk!", body),
+      subject: "Verify your AutoHome account",
+      html: emailWrapper("Welcome to AutoHome!", body),
     });
 
     res
@@ -211,13 +211,13 @@ exports.forgotPassword = async (req, res) => {
     const body = `
       <tr>
         <td align="center" style="color:#555;font-size:14px;padding-bottom:32px;">
-          Click the button below to reset your Blynk password.
+          Click the button below to reset your AutoHome password.
         </td>
       </tr>
       <tr>
         <td align="center" style="padding-bottom:16px;">
           <a href="${resetURL}"
-            style="display:inline-block;background:#d4f532;color:#111;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
+            style="display:inline-block;background:#3F8F3A;color:#111;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
             Reset Password
           </a>
         </td>
@@ -225,9 +225,9 @@ exports.forgotPassword = async (req, res) => {
     `;
 
     await resend.emails.send({
-      from: "Blynk <onboarding@resend.dev>",
+      from: "AutoHome <onboarding@resend.dev>",
       to: email,
-      subject: "Reset your Blynk password",
+      subject: "Reset your AutoHome password",
       html: emailWrapper("Reset your password", body),
     });
 
