@@ -11,6 +11,7 @@ import { inp, lbl, btnPrimary } from "./styles/common";
 
 const ROOM_ICONS = ["🏠", "🛋️", "🛏️", "🍳", "🚿", "🏢", "🌿", "🎮", "📚", "🏋️"];
 
+
 export default function Dashboard() {
   const router = useRouter();
   const [userId, setUserId] = useState(null);
@@ -510,7 +511,7 @@ function RoomModal({ form, setForm, onSave, onClose, isEdit }) {
               cursor: canSave ? "pointer" : "not-allowed",
               fontSize: "14px",
               fontWeight: "700",
-              color: "#111",
+              color: "white",
             }}
           >
             {isEdit ? "Save" : "Create Room"}

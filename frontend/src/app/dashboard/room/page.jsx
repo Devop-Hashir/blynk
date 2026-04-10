@@ -286,7 +286,7 @@ function DeviceModal({ form, setForm, onSave, onClose, isEdit, roomName }) {
 
         <div style={{ display: 'flex', gap: '12px' }}>
           <button onClick={onClose} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
-          <button onClick={onSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
+          <button onClick={onSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: 'white' }}>
             {isEdit ? 'Save' : 'Add Device'}
           </button>
         </div>

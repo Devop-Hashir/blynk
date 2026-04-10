@@ -22,7 +22,7 @@ function emailWrapper(title, bodyHtml) {
                       <tr>
                         <td align="center" valign="middle"
                           style="width:64px;height:64px;background:#3F8F3A;border-radius:4px;">
-                          <span style="font-size:36px;font-weight:900;color:#000;line-height:1;">B</span>
+                          <span style="font-size:36px;font-weight:900;color:white;line-height:1;">A</span>
                         </td>
                       </tr>
                     </table>

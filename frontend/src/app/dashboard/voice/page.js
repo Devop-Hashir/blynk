@@ -72,7 +72,7 @@ export default function VoiceCommandsPage() {
       <div style={{ background: '#fff', borderBottom: '1px solid #e8e8e8', padding: '0 16px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: '36px', height: '36px', background: '#3F8F3A', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px' }}>
-            <span style={{ fontWeight: '900', fontSize: '20px' }}>B</span>
+            <span style={{ fontWeight: '900', fontSize: '20px', color:"white" }}>A</span>
           </div>
           <span style={{ fontWeight: '700', fontSize: '18px', color: '#111' }}>AutoHome</span>
         </div>
@@ -119,7 +119,7 @@ export default function VoiceCommandsPage() {
             <p style={{ fontSize: '14px', color: '#888', margin: '0 0 24px' }}>
               Add your first command to start controlling devices by voice.
             </p>
-            <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer' }}>
+            <button onClick={openAdd} style={{ background: '#3F8F3A', border: 'none', borderRadius: '8px', padding: '10px 24px', fontWeight: '700', fontSize: '14px', cursor: 'pointer', color:"white" }}>
               + Add Command
             </button>
           </div>
@@ -143,7 +143,7 @@ export default function VoiceCommandsPage() {
                 <div style={{
                   padding: '4px 14px', borderRadius: '20px', fontWeight: '700', fontSize: '12px',
                   background: cmd.action === 'ON' ? '#3F8F3A' : '#111',
-                  color: cmd.action === 'ON' ? '#111' : '#fff'
+                  color: cmd.action === 'ON' ? 'white' : '#fff'
                 }}>
                   {cmd.action}
                 </div>
@@ -210,14 +210,14 @@ export default function VoiceCommandsPage() {
                   flex: 1, padding: '10px', border: 'none', borderRadius: '8px', fontWeight: '700',
                   fontSize: '14px', cursor: 'pointer',
                   background: form.action === a ? (a === 'ON' ? '#3F8F3A' : '#111') : '#f0f0f0',
-                  color: form.action === a ? (a === 'ON' ? '#111' : '#fff') : '#888'
+                  color: form.action === a ? (a === 'ON' ? 'white' : '#fff') : '#888'
                 }}>{a}</button>
               ))}
             </div>
 
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setShowModal(false)} style={{ flex: 1, padding: '10px', border: '1.5px solid #e0e0e0', borderRadius: '8px', background: '#fff', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: '#555' }}>Cancel</button>
-              <button onClick={handleSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: '#111' }}>
+              <button onClick={handleSave} disabled={!canSave} style={{ flex: 1, padding: '10px', border: 'none', borderRadius: '8px', background: canSave ? '#3F8F3A' : '#e8e8e8', cursor: canSave ? 'pointer' : 'not-allowed', fontSize: '14px', fontWeight: '700', color: 'white' }}>
                 {editCmd ? 'Save' : 'Add Command'}
               </button>
             </div>

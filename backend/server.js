@@ -4,7 +4,8 @@ const { Server } = require("socket.io");
 const { WebSocketServer } = require("ws");
 const app = require("./src/app");
 const connectDB = require("./src/db/db");
-
+const { Bonjour } = require('bonjour-service')
+const bonjour = new Bonjour()
 connectDB();
 
 const server = http.createServer(app);
@@ -141,7 +142,7 @@ app.get("/health", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-  console.log(`\n🚀 Server on http://localhost:${PORT}`);
-  console.log(`   ESP32  → ws://localhost:${PORT}/device`);
-  console.log(`   Dash   → http://localhost:${PORT}/socket.io/\n`);
-});
+  console.log(`🚀 Server on http://localhost:${PORT}`)
+  bonjour.publish({ name: 'myhome', type: 'http', port: PORT })
+  console.log(`📡 mDNS: http://myhome.local:${PORT}`)
+})
