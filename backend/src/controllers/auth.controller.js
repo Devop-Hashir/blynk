@@ -8,6 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // shared email wrapper — logo centered, single sender identity
 function emailWrapper(title, bodyHtml) {
+  const LOGO_URL = "https://autohome-psi.vercel.app/favicon.png";
   return `
     <!DOCTYPE html>
     <html>
@@ -20,10 +21,9 @@ function emailWrapper(title, bodyHtml) {
                   <td align="center" style="padding-bottom:24px;">
                     <table cellpadding="0" cellspacing="0">
                       <tr>
-                        <td align="center" valign="middle"
-                          style="width:64px;height:64px;background:#3F8F3A;border-radius:4px;">
-                          <span style="font-size:36px;font-weight:900;color:white;line-height:1;">A</span>
-                        </td>
+                        <td align="center" valign="middle">
+                         <img src="${LOGO_URL}" width="64" height="64" alt="AutoHome Logo" style="display:block;border-radius:4px;" />
+                       </td>
                       </tr>
                     </table>
                   </td>
@@ -217,7 +217,7 @@ exports.forgotPassword = async (req, res) => {
       <tr>
         <td align="center" style="padding-bottom:16px;">
           <a href="${resetURL}"
-            style="display:inline-block;background:#3F8F3A;color:#111;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
+            style="display:inline-block;background:#3F8F3A;color:white;padding:12px 32px;border-radius:6px;font-weight:700;text-decoration:none;font-size:15px;">
             Reset Password
           </a>
         </td>

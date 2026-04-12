@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Navbar({ userEmail, connected, onLogout, showVoice = false }) {
@@ -25,14 +26,8 @@ export default function Navbar({ userEmail, connected, onLogout, showVoice = fal
       `}</style>
 
       {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-        <div style={{
-          width: '34px', height: '34px', background: '#3F8F3A',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px'
-        }}>
-          <span style={{ fontWeight: '900', fontSize: '18px', color: 'white' }}>A</span>
-        </div>
-        <span style={{ fontWeight: '700', fontSize: '17px', color: '#111' }}>AutoHome</span>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+       <Image src={"/favicon.png"} height={32} width={32} alt='Logo'/>
       </div>
 
       {/* Right side */}
